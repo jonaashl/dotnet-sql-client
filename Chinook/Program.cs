@@ -1,6 +1,8 @@
 ﻿using Chinook.Models;
+using Chinook.Repositories;
 using Chinook.Repositories.Customers;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata.Ecma335;
 
 namespace Chinook
@@ -9,9 +11,8 @@ namespace Chinook
     {
         static void Main(string[] args)
         {
-           
-        }
 
+        }
         private static string GetConnectionString()
         {
             SqlConnectionStringBuilder builder = new();

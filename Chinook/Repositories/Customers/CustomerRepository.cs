@@ -12,6 +12,7 @@ namespace Chinook.Repositories.Customers
     {
         private string _connectionString;
 
+        // Probably have to update this if we move connection string to separate class.
         public CustomerRepository(string connectionString)
         {
             _connectionString = connectionString;
@@ -75,11 +76,6 @@ namespace Chinook.Repositories.Customers
         }
 
         public IEnumerable<Customer> GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Customer> GetCustomerById(int id)
         {
             throw new NotImplementedException();
         }
