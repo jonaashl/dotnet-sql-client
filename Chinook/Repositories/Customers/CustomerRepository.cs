@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,11 @@ namespace Chinook.Repositories.Customers
     {
         private string _connectionString;
 
-        // Probably have to update this if we move connection string to separate class.
         public CustomerRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
+
         public int Add(Customer obj)
         {
             int ret = 0;
@@ -47,37 +48,52 @@ namespace Chinook.Repositories.Customers
 
         public IEnumerable<Customer> GetAll()
         {
-            List<Customer> customers = new();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                Console.WriteLine("Connected");
-                string sql = "SELECT * FROM Customer";
-                using (SqlCommand cmd = new(sql, conn))
+            List<Customer> customers = new List<Customer>();
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            conn.Open();
+            Console.WriteLine("Connected");
+            string sql = "SELECT * FROM Customer";
+            using (SqlCommand cmd = new(sql, conn))
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            while (reader.Read())
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    customers.Add(new Customer()
                     {
-                        while (reader.Read())
-                        {
-                            customers.Add(new Customer()
-                            {
-                                CustomerId = reader.GetInt32(0),
-                                FirstName = reader.GetString(1),
-                                LastName = reader.GetString(2),
-                                Country = reader.IsDBNull(7) ? null : reader.GetString(7),
-                                PostalCode = reader.IsDBNull(8) ? null : reader.GetString(8),
-                                Phone = reader.IsDBNull(9) ? null : reader.GetString(9),
-                                Email = reader.GetString(11)
-                            });
-                        }
-                    }
+                        CustomerId = reader.GetInt32(0),
+                        FirstName = reader.GetString(1),
+                        LastName = reader.GetString(2),
+                        Country = reader.IsDBNull(7) ? null : reader.GetString(7),
+                        PostalCode = reader.IsDBNull(8) ? null : reader.GetString(8),
+                        Phone = reader.IsDBNull(9) ? null : reader.GetString(9),
+                        Email = reader.GetString(11)
+                    });
                 }
-            }
             return customers;
         }
 
         public IEnumerable<Customer> GetById(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public Customer GetCustomerById<T>(int id)
+        {
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            conn.Open();
+            string sql = "SELECT CustomerId, FirstName, LastName FROM Customer WHERE CustomerId = @CustomerId";
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@CustomerId", id);
+            using SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return new Customer
+                {
+                    CustomerId = reader.GetInt32(0),
+                    FirstName = reader.GetString(1),
+                    LastName = reader.GetString(2)
+                };
+            }
+            throw new Exception("no customer found with this id");
         }
 
         public IEnumerable<Customer> GetCustomerByName(string name)

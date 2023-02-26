@@ -11,7 +11,10 @@ namespace Chinook
     {
         static void Main(string[] args)
         {
+            ICustomerRepository customerRepository = new CustomerRepository(GetConnectionString());
 
+
+            customerRepository.GetAll().ToList().ForEach(customer => Console.WriteLine(customer));
         }
         private static string GetConnectionString()
         {

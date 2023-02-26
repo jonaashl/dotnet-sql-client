@@ -12,6 +12,6 @@ namespace Chinook.Repositories
         IEnumerable<T> GetById(ID id);
         int Add(T obj);
         int Update(T obj);
-        int Delete(ID obj);
+        int Delete(ID id);
     }
 }
