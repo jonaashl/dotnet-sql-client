@@ -3,7 +3,9 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,27 +20,24 @@ namespace Chinook.Repositories.Customers
             _connectionString = connectionString;
         }
 
-        public int Add(Customer obj)
+        public void Add(Customer obj)
         {
-            int ret = 0;
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string sql = "INSERT INTO Customer(CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email) VALUES(@CustomerId, @FirstName, @LastName, @Country, @PostalCode, @Phone, @Email";
+                string sql = "INSERT INTO Customer(FirstName, LastName, Country, PostalCode, Phone, Email) VALUES(@FirstName, @LastName, @Country, @PostalCode, @Phone, @Email)";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@CustomerId", obj.CustomerId);
+                    //cmd.Parameters.AddWithValue("@CustomerId", obj.CustomerId);
                     cmd.Parameters.AddWithValue("@FirstName", obj.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", obj.LastName);
                     cmd.Parameters.AddWithValue("@Country", obj.Country);
                     cmd.Parameters.AddWithValue("@PostalCode", obj.PostalCode);
                     cmd.Parameters.AddWithValue("@Phone", obj.Phone);
                     cmd.Parameters.AddWithValue("@Email", obj.Email);
-
-                    ret = cmd.ExecuteNonQuery();
-                }
+                    cmd.ExecuteNonQuery();
+                };
             }
-            return ret;
         }
 
         public int Delete(int obj)
@@ -46,7 +45,7 @@ namespace Chinook.Repositories.Customers
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Customer> GetAll()
+        public List<Customer> GetAll()
         {
             List<Customer> customers = new List<Customer>();
             using SqlConnection conn = new SqlConnection(_connectionString);
@@ -71,29 +70,32 @@ namespace Chinook.Repositories.Customers
             return customers;
         }
 
-        public IEnumerable<Customer> GetById(int id)
+        public Customer GetById(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Customer GetCustomerById<T>(int id)
-        {
+            Customer customer;
             using SqlConnection conn = new SqlConnection(_connectionString);
             conn.Open();
-            string sql = "SELECT CustomerId, FirstName, LastName FROM Customer WHERE CustomerId = @CustomerId";
+            string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer WHERE CustomerId = @CustomerId";
             using SqlCommand cmd = new SqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@CustomerId", id);
             using SqlDataReader reader = cmd.ExecuteReader();
-            if (reader.Read())
+            if (reader.NextResult())
             {
-                return new Customer
+                customer = new Customer()
                 {
                     CustomerId = reader.GetInt32(0),
                     FirstName = reader.GetString(1),
-                    LastName = reader.GetString(2)
+                    LastName = reader.GetString(2),
+                    Country = reader.GetString(3),
+                    PostalCode = reader.GetString(4),
+                    Phone = reader.GetString(5),
+                    Email = reader.GetString(6)
                 };
+            } else
+            {
+                throw new Exception("This doesnt work");
             }
-            throw new Exception("no customer found with this id");
+            return customer;
         }
 
         public IEnumerable<Customer> GetCustomerByName(string name)

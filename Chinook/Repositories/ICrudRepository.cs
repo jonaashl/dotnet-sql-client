@@ -8,9 +8,9 @@ namespace Chinook.Repositories
 {
     internal interface ICrudRepository <T, ID>
     {
-        IEnumerable<T> GetAll();
-        IEnumerable<T> GetById(ID id);
-        int Add(T obj);
+        List<T> GetAll();
+        T GetById(ID id);
+        void Add(T obj);
         int Update(T obj);
         int Delete(ID id);
     }

@@ -10,6 +10,5 @@ namespace Chinook.Repositories.Customers
     internal interface ICustomerRepository : ICrudRepository<Customer, int>
     {
         IEnumerable<Customer> GetCustomerByName(string name);
-        Customer GetCustomerById<T>(int id);
     }
 }

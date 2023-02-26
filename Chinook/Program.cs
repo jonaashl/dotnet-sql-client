@@ -1,6 +1,7 @@
 ﻿using Chinook.Models;
 using Chinook.Repositories;
 using Chinook.Repositories.Customers;
+using Chinook.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata.Ecma335;
@@ -12,9 +13,8 @@ namespace Chinook
         static void Main(string[] args)
         {
             ICustomerRepository customerRepository = new CustomerRepository(GetConnectionString());
-
-
-            customerRepository.GetAll().ToList().ForEach(customer => Console.WriteLine(customer));
+            CustomerClient customerClient = new CustomerClient(customerRepository);
+            customerClient.DoDataAccess();
         }
         private static string GetConnectionString()
         {
