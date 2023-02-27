@@ -154,9 +154,21 @@ namespace Chinook.Repositories.Customers
             }
         }
 
-        public int Delete(int obj)
+        public void Update(Customer obj)
         {
-            throw new NotImplementedException();
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+            string sql = "UPDATE Customer SET FirstName = @FirstName, LastName = @LastName, Country = @Country, PostalCode = @PostalCode, Phone = @Phone, Email = @Email WHERE CustomerId = @CustomerId";
+
+            using SqlCommand cmd = new(sql, conn);
+            cmd.Parameters.AddWithValue("@CustomerId", obj.CustomerId);
+            cmd.Parameters.AddWithValue("@FirstName", obj.FirstName);
+            cmd.Parameters.AddWithValue("@LastName", obj.LastName);
+            cmd.Parameters.AddWithValue("@Country", obj.Country);
+            cmd.Parameters.AddWithValue("@PostalCode", obj.PostalCode);
+            cmd.Parameters.AddWithValue("@Phone", obj.Phone);
+            cmd.Parameters.AddWithValue("@Email", obj.Email);
+            cmd.ExecuteNonQuery();
         }
 
         public List<Customer> GetAll()
