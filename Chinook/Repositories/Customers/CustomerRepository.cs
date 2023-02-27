@@ -171,29 +171,27 @@ namespace Chinook.Repositories.Customers
             cmd.ExecuteNonQuery();
         }
 
-        public List<Customer> GetAll()
+        public List<CustomerCountry> GetCustomerCountPerCountry()
         {
-            List<Customer> customers = new List<Customer>();
-            using SqlConnection conn = new SqlConnection(_connectionString);
+            List<CustomerCountry> customersPerCountry = new();
+
+            using SqlConnection conn = new(_connectionString);
             conn.Open();
-            Console.WriteLine("Connected");
-            string sql = "SELECT * FROM Customer";
-            using (SqlCommand cmd = new(sql, conn))
-            using (SqlDataReader reader = cmd.ExecuteReader())
+            string sql = "SELECT Country, COUNT(*) as CustomerCount FROM Customer GROUP BY Country ORDER BY CustomerCount DESC";
+
+            using SqlCommand cmd = new(sql, conn);
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
             while (reader.Read())
                 {
-                    customers.Add(new Customer()
-                    {
-                        CustomerId = reader.GetInt32(0),
-                        FirstName = reader.GetString(1),
-                        LastName = reader.GetString(2),
-                        Country = reader.IsDBNull(7) ? null : reader.GetString(7),
-                        PostalCode = reader.IsDBNull(8) ? null : reader.GetString(8),
-                        Phone = reader.IsDBNull(9) ? null : reader.GetString(9),
-                        Email = reader.GetString(11)
-                    });
+                string country = (string)reader["Country"];
+                int count = (int)reader["CustomerCount"];
+
+                customersPerCountry.Add(new CustomerCountry(country, count));
                 }
-            return customers;
+            
+            return customersPerCountry;
         }
 
         public Customer GetById(int id)
