@@ -3,7 +3,6 @@
 
 > Data access with SQL Client.
 
-README.md
 <img src="/assignmentCSHARP2.png" alt="dynamic duo" width=30% heigh=30% />
 
 ### 🏠 [Gitlab Homepage](https://gitlab.com/jonashl/backend-assignment-2)
