@@ -136,13 +136,12 @@ namespace Chinook.Repositories.Customers
 
         public void Add(Customer obj)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new(_connectionString))
             {
                 conn.Open();
                 string sql = "INSERT INTO Customer(FirstName, LastName, Country, PostalCode, Phone, Email) VALUES(@FirstName, @LastName, @Country, @PostalCode, @Phone, @Email)";
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SqlCommand cmd = new(sql, conn))
                 {
-                    //cmd.Parameters.AddWithValue("@CustomerId", obj.CustomerId);
                     cmd.Parameters.AddWithValue("@FirstName", obj.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", obj.LastName);
                     cmd.Parameters.AddWithValue("@Country", obj.Country);
@@ -184,12 +183,12 @@ namespace Chinook.Repositories.Customers
             using SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
-                {
+            {
                 string country = (string)reader["Country"];
                 int count = (int)reader["CustomerCount"];
 
                 customersPerCountry.Add(new CustomerCountry(country, count));
-                }
+            }
             
             return customersPerCountry;
         }
@@ -236,10 +235,10 @@ namespace Chinook.Repositories.Customers
 
             Console.WriteLine($"Most popular genre for {obj.FirstName}:");
             while (reader.Read())
-        {
+            {
                 mostPopularGenres.Add(reader.GetString(0));
-        }
-
+            }
+            
             return mostPopularGenres;
         }
     }
