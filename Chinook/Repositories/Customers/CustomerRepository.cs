@@ -221,14 +221,26 @@ namespace Chinook.Repositories.Customers
             return customers;
         }
 
-        public IEnumerable<Customer> GetCustomerByName(string name)
+        public List<string> GetCustomerMostPopularGenre(Customer obj)
         {
-            throw new NotImplementedException();
+            List<string> mostPopularGenres = new();
+
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+            string sql = "SELECT TOP 1 WITH TIES g.Name, COUNT(*) AS Count FROM InvoiceLine il INNER JOIN Track t ON il.TrackId = t.TrackId INNER JOIN Genre g ON t.GenreId = g.GenreId INNER JOIN Invoice i ON il.InvoiceId = i.InvoiceId WHERE i.CustomerId = @CustomerId GROUP BY g.Name ORDER BY Count DESC";
+
+            using SqlCommand cmd = new(sql, conn);
+            cmd.Parameters.AddWithValue("@CustomerId", obj.CustomerId);
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            Console.WriteLine($"Most popular genre for {obj.FirstName}:");
+            while (reader.Read())
+        {
+                mostPopularGenres.Add(reader.GetString(0));
         }
 
-        public int Update(Customer obj)
-        {
-            throw new NotImplementedException();
+            return mostPopularGenres;
         }
     }
 }
