@@ -1,10 +1,5 @@
 ﻿using Chinook.Models;
 using Chinook.Repositories.Customers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chinook.Utils
 {
@@ -17,15 +12,19 @@ namespace Chinook.Utils
             _customerRepository = customerRepository;
         }
 
-        public void DoDataAccess()
+        /// <summary>
+        /// For testing the repository methods
+        /// </summary>
+        public void DoTheStuff()
         {
             _customerRepository.GetAll().ForEach(customer => Console.WriteLine(customer));
 
             Customer Steffen = new() {FirstName = "Steffen", LastName = "Tommeras", Country = "Norway", PostalCode = "1274", Phone = "99991", Email = "biggersecret@gmail.com" };
-            //_customerRepository.Add(Steffen);
+            _customerRepository.Add(Steffen);
 
-            Console.WriteLine("\nGetting by name and ID:");
+            Console.WriteLine("\nGetting ID:");
             Console.WriteLine(_customerRepository.GetById(10));
+            Console.WriteLine("\nGetting Name:");
             Console.WriteLine(_customerRepository.GetCustomerByName("Steffe"));
 
             Console.WriteLine("\nUpdating user:");

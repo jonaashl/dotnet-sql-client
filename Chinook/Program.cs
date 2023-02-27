@@ -1,10 +1,6 @@
-﻿using Chinook.Models;
-using Chinook.Repositories;
-using Chinook.Repositories.Customers;
+﻿using Chinook.Repositories.Customers;
 using Chinook.Utils;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Chinook
 {
@@ -12,18 +8,20 @@ namespace Chinook
     {
         static void Main(string[] args)
         {
+            // testing with mock data
             ICustomerRepository customerRepository = new CustomerRepository(GetConnectionString());
-            CustomerClient customerClient = new CustomerClient(customerRepository);
-            customerClient.DoDataAccess();
+            CustomerClient customerClient = new(customerRepository);
+            customerClient.DoTheStuff();
         }
         private static string GetConnectionString()
         {
-            SqlConnectionStringBuilder builder = new();
-            // builder.DataSource = "N-NO-01-01-1451\\SQLEXPRESS";  // Jonas
-            builder.DataSource = "STEFFENS-DESKTO\\SQLEXPRESS01";   // Steffen
-            builder.IntegratedSecurity = true;
-            builder.InitialCatalog = "Chinook";
-            builder.TrustServerCertificate = true;
+            SqlConnectionStringBuilder builder = new()
+            {
+                DataSource = "YOUR_CONNECTION_STRING_HERE",
+                IntegratedSecurity = true,
+                InitialCatalog = "Chinook",
+                TrustServerCertificate = true
+            };
             return builder.ConnectionString;
         }
     }

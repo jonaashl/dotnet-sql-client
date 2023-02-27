@@ -12,6 +12,10 @@ namespace Chinook.Repositories.Customers
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Gets all the customers in the database.
+        /// </summary>
+        /// <returns></returns>
         public List<Customer> GetAll()
         {
             List<Customer> customers = new();
@@ -38,6 +42,12 @@ namespace Chinook.Repositories.Customers
             return customers;
         }
 
+        /// <summary>
+        /// Finds the user with id equal to <c>id</c> in the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Customer GetById(int id)
         {
             Customer customer;
@@ -70,6 +80,12 @@ namespace Chinook.Repositories.Customers
             return customer;
         }
 
+        /// <summary>
+        /// Finds the user with name equal to <c>name</c> in the database.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Customer GetCustomerByName(string name)
         {
             Customer customer;
@@ -102,7 +118,13 @@ namespace Chinook.Repositories.Customers
             return customer;
         }
 
-        public List<Customer> GetCustomerPage(int limit, int offset)
+        /// <summary>
+        /// Gets a page with customers from the database with classic <c>limit</c> and <c>offset</c> params.
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public List<Customer> GetCustomerPage(int limit, int offset)    // could (should?) be just one method for GetAll and this, with limit and offset defaulting to 0.
         {
             List<Customer> customers = new();
 
@@ -131,6 +153,10 @@ namespace Chinook.Repositories.Customers
             return customers;
         }
 
+        /// <summary>
+        /// Adds a new customer to the database.
+        /// </summary>
+        /// <param name="obj"></param>
         public void Add(Customer obj)
         {
             using SqlConnection conn = new(_connectionString);
@@ -148,6 +174,10 @@ namespace Chinook.Repositories.Customers
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Updates a user in the database.
+        /// </summary>
+        /// <param name="obj"></param>
         public void Update(Customer obj)
         {
             using SqlConnection conn = new(_connectionString);
@@ -166,6 +196,10 @@ namespace Chinook.Repositories.Customers
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Gets the number of customers per country in the database.
+        /// </summary>
+        /// <returns></returns>
         public List<CustomerCountry> GetCustomerCountPerCountry()
         {
             List<CustomerCountry> customersPerCountry = new();
@@ -188,6 +222,10 @@ namespace Chinook.Repositories.Customers
             return customersPerCountry;
         }
 
+        /// <summary>
+        /// Gets all customers and their spendings, sorted by most spent.
+        /// </summary>
+        /// <returns></returns>
         public List<CustomerSpender> GetHighestSpenders()
         {
             List<CustomerSpender> customerSpenders = new();
@@ -216,6 +254,11 @@ namespace Chinook.Repositories.Customers
             return customerSpenders;
         }
 
+        /// <summary>
+        /// Gets a customers most popular genre, which in this context is the genre that corresponds to the most tracks from invoices associated to that customer.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public CustomerGenre GetCustomerMostPopularGenre(Customer obj)
         {
             List<string> genres = new();
