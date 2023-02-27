@@ -76,24 +76,25 @@ namespace Chinook.Repositories.Customers
             using SqlConnection conn = new SqlConnection(_connectionString);
             conn.Open();
             string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer WHERE CustomerId = @CustomerId";
+
             using SqlCommand cmd = new SqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@CustomerId", id);
             using SqlDataReader reader = cmd.ExecuteReader();
+            Console.WriteLine("Gotten by id");
             if (reader.NextResult())
             {
-                customer = new Customer()
-                {
-                    CustomerId = reader.GetInt32(0),
-                    FirstName = reader.GetString(1),
-                    LastName = reader.GetString(2),
-                    Country = reader.GetString(3),
-                    PostalCode = reader.GetString(4),
-                    Phone = reader.GetString(5),
-                    Email = reader.GetString(6)
-                };
+                customer = new Customer(
+                    reader.GetInt32(0),
+                    reader.GetString(1),
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetString(4),
+                    reader.GetString(5),
+                    reader.GetString(6)
+                );
             } else
             {
-                throw new Exception("This doesnt work");
+                throw new Exception("WIIIII");
             }
             return customer;
         }

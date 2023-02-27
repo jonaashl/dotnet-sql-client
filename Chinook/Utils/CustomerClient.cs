@@ -24,6 +24,8 @@ namespace Chinook.Utils
             Customer Jonas = new Customer() {FirstName = "Jonas", LastName = "Lindevall", Country = "Norway", PostalCode = "1281", Phone = "99999", Email = "bigsecret@gmail.com" };
             _customerRepository.Add(Jonas);
 
+            _customerRepository.GetById(10);
+
         }
     }
 }
