@@ -13,7 +13,7 @@ namespace Chinook.Repositories.Customers
 {
     internal class CustomerRepository : ICustomerRepository
     {
-        private string _connectionString;
+        private readonly string _connectionString;
 
         public CustomerRepository(string connectionString)
         {
@@ -189,13 +189,13 @@ namespace Chinook.Repositories.Customers
 
                 customersPerCountry.Add(new CustomerCountry(country, count));
             }
-            
+
             return customersPerCountry;
         }
 
-        public List<Customer> GetHighestSpenders()
+        public List<CustomerSpender> GetHighestSpenders()
         {
-            List<Customer> customers = new();
+            List<CustomerSpender> customerSpenders = new();
 
             using SqlConnection conn = new(_connectionString);
             conn.Open();
@@ -206,18 +206,19 @@ namespace Chinook.Repositories.Customers
             using SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                customers.Add(new Customer(
-                    reader.GetInt32(0),
-                    reader.GetString(1),
-                    reader.GetString(2),
-                    reader.IsDBNull(3) ? null : reader.GetString(3),
-                    reader.IsDBNull(4) ? null : reader.GetString(4),
-                    reader.IsDBNull(5) ? null : reader.GetString(5),
-                    reader.GetString(6))
+                customerSpenders.Add(new CustomerSpender(
+                                new Customer(   reader.GetInt32(0),
+                                                reader.GetString(1),
+                                                reader.GetString(2),
+                                                reader.IsDBNull(3) ? null : reader.GetString(3),
+                                                reader.IsDBNull(4) ? null : reader.GetString(4),
+                                                reader.IsDBNull(5) ? null : reader.GetString(5),
+                                                reader.GetString(6)),
+                                (double)reader.GetDecimal(7))
                 );
             }
 
-            return customers;
+            return customerSpenders;
         }
 
         public List<string> GetCustomerMostPopularGenre(Customer obj)
@@ -238,7 +239,7 @@ namespace Chinook.Repositories.Customers
             {
                 mostPopularGenres.Add(reader.GetString(0));
             }
-            
+
             return mostPopularGenres;
         }
     }
