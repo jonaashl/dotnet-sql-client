@@ -194,33 +194,31 @@ namespace Chinook.Repositories.Customers
             return customersPerCountry;
         }
 
-        public Customer GetById(int id)
+        public List<Customer> GetHighestSpenders()
         {
-            Customer customer;
-            using SqlConnection conn = new SqlConnection(_connectionString);
-            conn.Open();
-            string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer WHERE CustomerId = @CustomerId";
+            List<Customer> customers = new();
 
-            using SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@CustomerId", id);
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+
+            string sql = "SELECT c.CustomerId, c.FirstName, c.LastName, c.Country, c.PostalCode, c.Phone, c.Email, SUM(i.Total) AS TotalSpent FROM Customer c JOIN Invoice i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName, c.Country, c.PostalCode, c.Phone, c.Email ORDER BY TotalSpent DESC";
+
+            using SqlCommand cmd = new(sql, conn);
             using SqlDataReader reader = cmd.ExecuteReader();
-            Console.WriteLine("Gotten by id");
-            if (reader.NextResult())
+            while (reader.Read())
             {
-                customer = new Customer(
+                customers.Add(new Customer(
                     reader.GetInt32(0),
                     reader.GetString(1),
                     reader.GetString(2),
-                    reader.GetString(3),
-                    reader.GetString(4),
-                    reader.GetString(5),
-                    reader.GetString(6)
+                    reader.IsDBNull(3) ? null : reader.GetString(3),
+                    reader.IsDBNull(4) ? null : reader.GetString(4),
+                    reader.IsDBNull(5) ? null : reader.GetString(5),
+                    reader.GetString(6))
                 );
-            } else
-            {
-                throw new Exception("WIIIII");
             }
-            return customer;
+
+            return customers;
         }
 
         public IEnumerable<Customer> GetCustomerByName(string name)
