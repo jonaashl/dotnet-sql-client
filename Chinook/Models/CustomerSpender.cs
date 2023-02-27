@@ -8,5 +8,9 @@ namespace Chinook.Models
 {
     internal readonly record struct CustomerSpender(Customer Customer, double TotalSpent)
     {
+        public override string? ToString()
+        {
+            return $"{Customer.CustomerId} {Customer.FirstName} {Customer.LastName}. Total spent: {TotalSpent}";
+        }
     }
 }
