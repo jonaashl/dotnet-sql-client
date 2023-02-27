@@ -20,6 +20,120 @@ namespace Chinook.Repositories.Customers
             _connectionString = connectionString;
         }
 
+        public List<Customer> GetAll()
+        {
+            List<Customer> customers = new();
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+            Console.WriteLine("Connected");
+            string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer";
+            using (SqlCommand cmd = new(sql, conn))
+            using (SqlDataReader reader = cmd.ExecuteReader())
+                while (reader.Read())
+                {
+                    customers.Add(new Customer(
+                        reader.GetInt32(0),
+                        reader.GetString(1),
+                        reader.GetString(2),
+                        reader.IsDBNull(3) ? null : reader.GetString(3),
+                        reader.IsDBNull(4) ? null : reader.GetString(4),
+                        reader.IsDBNull(5) ? null : reader.GetString(5),
+                        reader.GetString(6))
+                    );
+                }
+            return customers;
+        }
+
+        public Customer GetById(int id)
+        {
+            Customer customer;
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+            string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer WHERE CustomerId = @CustomerId";
+
+            using SqlCommand cmd = new(sql, conn);
+            cmd.Parameters.AddWithValue("@CustomerId", id);
+            using SqlDataReader reader = cmd.ExecuteReader();
+            Console.WriteLine("Gotten by id");
+            if (reader.Read())
+            {
+                customer = new Customer(
+                    reader.GetInt32(0),
+                    reader.GetString(1),
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetString(4),
+                    reader.GetString(5),
+                    reader.GetString(6)
+                );
+                Console.WriteLine(customer.FirstName);
+            }
+            else
+            {
+                throw new Exception("There is no customer with that ID.");
+            }
+            return customer;
+        }
+
+        public Customer GetCustomerByName(string name)
+        {
+            Customer customer;
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+            string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer WHERE FirstName LIKE @Name OR LastName LIKE @Name";
+
+            using SqlCommand cmd = new(sql, conn);
+            cmd.Parameters.AddWithValue("@Name", "%" + name + "%");
+            using SqlDataReader reader = cmd.ExecuteReader();
+            Console.WriteLine("Gotten by name:");
+            if (reader.Read())
+            {
+                customer = new Customer(
+                    reader.GetInt32(0),
+                    reader.GetString(1),
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetString(4),
+                    reader.GetString(5),
+                    reader.GetString(6)
+                );
+                Console.WriteLine(customer.FirstName);
+            }
+            else
+            {
+                throw new Exception("There is no customer with that name.");
+            }
+            return customer;
+        }
+
+        public List<Customer> GetCustomerPage(int limit, int offset)
+        {
+            List<Customer> customers = new();
+            using SqlConnection conn = new(_connectionString);
+            conn.Open();
+
+            string sql = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email FROM Customer ORDER BY CustomerId OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY";
+
+            using SqlCommand cmd = new(sql, conn);
+            cmd.Parameters.AddWithValue("@Limit", limit);
+            cmd.Parameters.AddWithValue("@Offset", offset);
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                customers.Add(new Customer(
+                    reader.GetInt32(0),
+                    reader.GetString(1),
+                    reader.GetString(2),
+                    reader.IsDBNull(3) ? null : reader.GetString(3),
+                    reader.IsDBNull(4) ? null : reader.GetString(4),
+                    reader.IsDBNull(5) ? null : reader.GetString(5),
+                    reader.GetString(6))
+                );
+            }
+            return customers;
+        }
+
         public void Add(Customer obj)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
