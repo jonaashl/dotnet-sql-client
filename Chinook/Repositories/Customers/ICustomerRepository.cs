@@ -13,6 +13,6 @@ namespace Chinook.Repositories.Customers
         List<Customer> GetCustomerPage(int limit, int offset);
         List<CustomerCountry> GetCustomerCountPerCountry();
         List<CustomerSpender> GetHighestSpenders();
-        List<string> GetCustomerMostPopularGenre(Customer obj);
+        List<CustomerGenre> GetCustomerMostPopularGenre(Customer obj);
     }
 }
