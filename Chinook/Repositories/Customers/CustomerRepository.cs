@@ -62,7 +62,6 @@ namespace Chinook.Repositories.Customers
                     reader.GetString(5),
                     reader.GetString(6)
                 );
-                Console.WriteLine(customer.FirstName);
             }
             else
             {
@@ -217,9 +216,9 @@ namespace Chinook.Repositories.Customers
             return customerSpenders;
         }
 
-        public List<string> GetCustomerMostPopularGenre(Customer obj)
+        public CustomerGenre GetCustomerMostPopularGenre(Customer obj)
         {
-            List<string> mostPopularGenres = new();
+            List<string> genres = new();
 
             using SqlConnection conn = new(_connectionString);
             conn.Open();
@@ -232,10 +231,10 @@ namespace Chinook.Repositories.Customers
 
             while (reader.Read())
             {
-                mostPopularGenres.Add(reader.GetString(0));
+                genres.Add(reader.GetString(0));
             }
 
-            return mostPopularGenres;
+            return new CustomerGenre(obj, genres);
         }
     }
 }
