@@ -19,7 +19,8 @@ namespace Chinook
         private static string GetConnectionString()
         {
             SqlConnectionStringBuilder builder = new();
-            builder.DataSource = "N-NO-01-01-1451\\SQLEXPRESS";
+            // builder.DataSource = "N-NO-01-01-1451\\SQLEXPRESS";  // Jonas
+            builder.DataSource = "STEFFENS-DESKTO\\SQLEXPRESS01";   // Steffen
             builder.IntegratedSecurity = true;
             builder.InitialCatalog = "Chinook";
             builder.TrustServerCertificate = true;
