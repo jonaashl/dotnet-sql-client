@@ -9,6 +9,10 @@ namespace Chinook.Repositories.Customers
 {
     internal interface ICustomerRepository : ICrudRepository<Customer, int>
     {
-        IEnumerable<Customer> GetCustomerByName(string name);
+        Customer GetCustomerByName(string name);
+        List<Customer> GetCustomerPage(int limit, int offset);
+        List<CustomerCountry> GetCustomerCountPerCountry();
+        List<Customer> GetHighestSpenders();
+        List<string> GetCustomerMostPopularGenre(Customer obj);
     }
 }
